@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     string settings_yaml{};
     bool verbose{true};
 
-    string vocabulary{"VSLAM-LAB/Baselines/ORB_SLAM2_VSLAMLAB/Vocabulary/ORBvoc.txt"};
+    string vocabulary{"Vocabulary/ORBvoc.txt"};
 
     for (int i = 0; i < argc; ++i) {
         std::string arg = argv[i];

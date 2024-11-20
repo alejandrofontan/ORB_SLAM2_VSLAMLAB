@@ -68,5 +68,5 @@ target_link_libraries(${PROJECT_NAME}
 #Examples/Stereo/stereo_euroc.cc)
 #target_link_libraries(stereo_euroc ${PROJECT_NAME})
 
-add_executable(mono Examples/mono/mono.cpp)
+add_executable(mono Examples/mono/mono_vslamlab.cpp)
 target_link_libraries(mono ${PROJECT_NAME})

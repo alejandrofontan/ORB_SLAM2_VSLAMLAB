@@ -101,10 +101,6 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
     cout << "- p2: " << DistCoef.at<float>(3) << endl;
     cout << "- fps: " << fps << endl;
     cout << "- RGB: " << mbRGB << endl;
-    if (!fCalibration["Camera.bf"].empty()){
-        mbf = fCalibration["Camera.bf"];
-        cout << "- bf: " << mbf << endl;
-    }
 
     // Load settings file
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
@@ -133,19 +129,26 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
 
     if(sensor==System::STEREO || sensor==System::RGBD)
     {
-        mThDepth = mbf*(float)fSettings["ThDepth"]/fx;
-        cout << endl << "Depth Threshold (Close/Far Points): " << mThDepth << endl;
+        cout << endl  << "[Tracking.cc] RGB-D/STEREO Parameters: " << strSettingPath << endl;
+
+        mbf = fSettings["Camera.bf"];
+        cout << "- bf: " << mbf << endl;
+
+        mThDepth = mbf *( float)fSettings["ThDepth"] / fx;
+        cout << "- Depth Threshold: " << mThDepth << endl;
+
     }
+
 
     if(sensor==System::RGBD)
     {
         mDepthMapFactor = fSettings["DepthMapFactor"];
+        cout << "- Depth Map Factor: " << mDepthMapFactor << endl;
         if(fabs(mDepthMapFactor)<1e-5)
             mDepthMapFactor=1;
         else
             mDepthMapFactor = 1.0f/mDepthMapFactor;
     }
-
 }
 
 void Tracking::SetLocalMapper(LocalMapping *pLocalMapper)

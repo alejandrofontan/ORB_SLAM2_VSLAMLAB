@@ -26,29 +26,43 @@
 namespace ORB_SLAM2
 {
 
-Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, Tracking *pTracking, const string &strSettingPath):
+Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, Tracking *pTracking,
+               const string &strCalibrationPath, const string &strSettingPath):
     mpSystem(pSystem), mpFrameDrawer(pFrameDrawer),mpMapDrawer(pMapDrawer), mpTracker(pTracking),
     mbFinishRequested(false), mbFinished(true), mbStopped(true), mbStopRequested(false)
 {
-    cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
+    cv::FileStorage fCalibration(strCalibrationPath, cv::FileStorage::READ);
 
-    float fps = fSettings["Camera.fps"];
+    float fps = fCalibration["Camera.fps"];
     if(fps<1)
         fps=30;
     mT = 1e3/fps;
 
-    mImageWidth = fSettings["Camera.width"];
-    mImageHeight = fSettings["Camera.height"];
+    mImageWidth = fCalibration["Camera.w"];
+    mImageHeight = fCalibration["Camera.h"];
     if(mImageWidth<1 || mImageHeight<1)
     {
         mImageWidth = 640;
         mImageHeight = 480;
     }
 
+    cout << endl << "[Viewer.cc] Camera Parameters: " << strCalibrationPath << endl;
+    cout << "- w: " << mImageWidth << endl;
+    cout << "- h: " << mImageHeight << endl;
+    cout << "- fps: " << fps << endl;
+
+    cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
     mViewpointX = fSettings["Viewer.ViewpointX"];
     mViewpointY = fSettings["Viewer.ViewpointY"];
     mViewpointZ = fSettings["Viewer.ViewpointZ"];
     mViewpointF = fSettings["Viewer.ViewpointF"];
+
+    cout << endl << "[Viewer.cc] Viewer Parameters: " << strSettingPath << endl;
+    cout << "- mViewpointX: " << mViewpointX << endl;
+    cout << "- mViewpointY: " << mViewpointY << endl;
+    cout << "- mViewpointZ: " << mViewpointZ << endl;
+    cout << "- mViewpointF: " << mViewpointF << endl;
+
 }
 
 void Viewer::Run()

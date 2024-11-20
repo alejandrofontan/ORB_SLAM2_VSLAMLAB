@@ -39,6 +39,13 @@ MapDrawer::MapDrawer(Map* pMap, const string &strSettingPath):mpMap(pMap)
     mCameraSize = fSettings["Viewer.CameraSize"];
     mCameraLineWidth = fSettings["Viewer.CameraLineWidth"];
 
+    cout << endl << "[MapDrawer.cc] Viewer Parameters: " << strSettingPath << endl;
+    cout << "- KeyFrameSize: " << mKeyFrameSize << endl;
+    cout << "- KeyFrameLineWidth: " << mKeyFrameLineWidth << endl;
+    cout << "- GraphLineWidth: " << mGraphLineWidth << endl;
+    cout << "- PointSize: " << mPointSize << endl;
+    cout << "- CameraSize: " << mCameraSize << endl;
+    cout << "- CameraLineWidth: " << mCameraLineWidth << endl;
 }
 
 void MapDrawer::DrawMapPoints()

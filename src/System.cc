@@ -29,9 +29,11 @@
 namespace ORB_SLAM2
 {
 
-System::System(const string &strVocFile, const string &strSettingsFile, const eSensor sensor,
-               const bool bUseViewer):mSensor(sensor), mpViewer(static_cast<Viewer*>(NULL)), mbReset(false),mbActivateLocalizationMode(false),
-        mbDeactivateLocalizationMode(false)
+System::System(const string &strVocFile, const string &strCalibrationFile, const string &strSettingsFile,
+               const eSensor sensor, const bool bUseViewer):
+               mSensor(sensor), mpViewer(static_cast<Viewer*>(NULL)),
+               mbReset(false),mbActivateLocalizationMode(false),
+               mbDeactivateLocalizationMode(false)
 {
     // Output welcome message
     cout << endl <<
@@ -50,13 +52,19 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         cout << "RGB-D" << endl;
 
     //Check settings file
-    cv::FileStorage fsSettings(strSettingsFile.c_str(), cv::FileStorage::READ);
-    if(!fsSettings.isOpened())
+    cv::FileStorage fsCalibration(strCalibrationFile.c_str(), cv::FileStorage::READ);
+    if(!fsCalibration.isOpened())
     {
-       cerr << "Failed to open settings file at: " << strSettingsFile << endl;
+       cerr << "Failed to open calibration file at: " << strCalibrationFile << endl;
        exit(-1);
     }
 
+    cv::FileStorage fsSettings(strSettingsFile.c_str(), cv::FileStorage::READ);
+    if(!fsSettings.isOpened())
+    {
+        cerr << "Failed to open settings file at: " << strSettingsFile << endl;
+        exit(-1);
+    }
 
     //Load ORB Vocabulary
     cout << endl << "Loading ORB Vocabulary. This could take a while..." << endl;
@@ -84,7 +92,9 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     //Initialize the Tracking thread
     //(it will live in the main thread of execution, the one that called this constructor)
     mpTracker = new Tracking(this, mpVocabulary, mpFrameDrawer, mpMapDrawer,
-                             mpMap, mpKeyFrameDatabase, strSettingsFile, mSensor);
+                             mpMap, mpKeyFrameDatabase,
+                             strCalibrationFile, strSettingsFile,
+                             mSensor);
 
     //Initialize the Local Mapping thread and launch
     mpLocalMapper = new LocalMapping(mpMap, mSensor==MONOCULAR);
@@ -97,7 +107,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     //Initialize the Viewer thread and launch
     if(bUseViewer)
     {
-        mpViewer = new Viewer(this, mpFrameDrawer,mpMapDrawer,mpTracker,strSettingsFile);
+        mpViewer = new Viewer(this, mpFrameDrawer,mpMapDrawer,mpTracker,strCalibrationFile, strSettingsFile);
         mptViewer = new thread(&Viewer::Run, mpViewer);
         mpTracker->SetViewer(mpViewer);
     }

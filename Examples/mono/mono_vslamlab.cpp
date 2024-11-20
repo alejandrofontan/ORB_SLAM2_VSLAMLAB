@@ -34,7 +34,8 @@ namespace ORB_SLAM2{
     using Seconds = double;
 }
 
-void LoadImages(const string &pathToSequence, vector<string> &imageFilenames, vector<ORB_SLAM2::Seconds> &timestamps);
+void LoadImages(const string &pathToSequence, const string &rgb_txt,
+                vector<string> &imageFilenames, vector<ORB_SLAM2::Seconds> &timestamps);
 std::string paddingZeros(const std::string& number, const size_t numberOfZeros = 5);
 
 void removeSubstring(std::string& str, const std::string& substring) {
@@ -54,59 +55,59 @@ int main(int argc, char **argv)
     string rgb_txt;
     string exp_folder;
     string exp_id{"0"};
-    string settings_yaml{};
+    string settings_yaml{"orbslam2_settings.yaml"};
     bool verbose{true};
 
     string vocabulary{"Vocabulary/ORBvoc.txt"};
-
+    cout << endl;
     for (int i = 0; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg.find("sequence_path:") != std::string::npos) {
             removeSubstring(arg, "sequence_path:");
             sequence_path =  arg;
-            std::cout << "Path to sequence = " << sequence_path << std::endl;
+            std::cout << "[mono_vslamlab.cpp] Path to sequence = " << sequence_path << std::endl;
             continue;
         }
         if (arg.find("calibration_yaml:") != std::string::npos) {
             removeSubstring(arg, "calibration_yaml:");
             calibration_yaml =  arg;
-            std::cout << "Path to calibration.yaml = " << calibration_yaml << std::endl;
+            std::cout << "[mono_vslamlab.cpp] Path to calibration.yaml = " << calibration_yaml << std::endl;
             continue;
         }
         if (arg.find("rgb_txt:") != std::string::npos) {
             removeSubstring(arg, "rgb_txt:");
             rgb_txt =  arg;
-            std::cout << "Path to rgb_txt = " << rgb_txt << std::endl;
+            std::cout << "[mono_vslamlab.cpp] Path to rgb_txt = " << rgb_txt << std::endl;
             continue;
         }
         if (arg.find("exp_folder:") != std::string::npos) {
             removeSubstring(arg, "exp_folder:");
             exp_folder =  arg;
-            std::cout << "Path to exp_folder = " << exp_folder << std::endl;
+            std::cout << "[mono_vslamlab.cpp] Path to exp_folder = " << exp_folder << std::endl;
             continue;
         }
         if (arg.find("exp_id:") != std::string::npos) {
             removeSubstring(arg, "exp_id:");
             exp_id =  arg;
-            std::cout << "Exp id = " << exp_id << std::endl;
+            std::cout << "[mono_vslamlab.cpp] Exp id = " << exp_id << std::endl;
             continue;
         }
         if (arg.find("settings_yaml:") != std::string::npos) {
             removeSubstring(arg, "settings_yaml:");
             settings_yaml =  arg;
-            std::cout << "Path to settings_yaml = " << settings_yaml << std::endl;
+            std::cout << "[mono_vslamlab.cpp] Path to settings_yaml = " << settings_yaml << std::endl;
             continue;
         }
         if (arg.find("verbose:") != std::string::npos) {
             removeSubstring(arg, "verbose:");
             verbose = bool(std::stoi(arg));
-            std::cout << "Activate Visualization = " << verbose << std::endl;
+            std::cout << "[mono_vslamlab.cpp] Activate Visualization = " << verbose << std::endl;
             continue;
         }
         if (arg.find("vocabulary:") != std::string::npos) {
             removeSubstring(arg, "vocabulary:");
             vocabulary = arg;
-            std::cout << "Path to vocabulary = " << vocabulary << std::endl;
+            std::cout << "[mono_vslamlab.cpp] Path to vocabulary = " << vocabulary << std::endl;
             continue;
         }
     }
@@ -115,12 +116,12 @@ int main(int argc, char **argv)
     // Retrieve paths to images
     vector<string> imageFilenames{};
     vector<ORB_SLAM2::Seconds> timestamps{};
-    LoadImages(sequence_path, imageFilenames, timestamps);
+    LoadImages(sequence_path, rgb_txt, imageFilenames, timestamps);
 
     size_t nImages = imageFilenames.size();
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM2::System SLAM(vocabulary, calibration_yaml,
+    ORB_SLAM2::System SLAM(vocabulary, calibration_yaml, settings_yaml,
                            ORB_SLAM2::System::MONOCULAR,
                            verbose);
 
@@ -181,12 +182,12 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void LoadImages(const string &pathToSequence, vector<string> &imageFilenames, vector<ORB_SLAM2::Seconds> &timestamps)
+void LoadImages(const string &pathToSequence, const string &rgb_txt,
+                vector<string> &imageFilenames, vector<ORB_SLAM2::Seconds> &timestamps)
 {
 
     ifstream times;
-    string pathToTimeFile = pathToSequence + "/rgb.txt";
-    times.open(pathToTimeFile.c_str());
+    times.open(rgb_txt.c_str());
 
     string s0;
     while(!times.eof())

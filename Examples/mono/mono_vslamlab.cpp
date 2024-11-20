@@ -44,63 +44,85 @@ void removeSubstring(std::string& str, const std::string& substring) {
     }
 }
 
+
 int main(int argc, char **argv)
 {
 
     // ORB_SLAM2 PLUS inputs
-    bool activateVisualization{true};
-    string path_to_vocabulary;
-    string path_to_sequence;
-    string path_to_output;
-    string experimentIndex{"0"};
+    string sequence_path;
+    string calibration_yaml;
+    string rgb_txt;
+    string exp_folder;
+    string exp_id{"0"};
+    string settings_yaml{};
+    bool verbose{true};
+
+    string vocabulary{"VSLAM-LAB/Baselines/ORB_SLAM2_VSLAMLAB/Vocabulary/ORBvoc.txt"};
+
     for (int i = 0; i < argc; ++i) {
         std::string arg = argv[i];
-        if (arg.find("Vis:") != std::string::npos) {
-            removeSubstring(arg, "Vis:");
-            activateVisualization = bool(std::stoi(arg));
-            std::cout << "Activate Visualization = " << activateVisualization << std::endl;
-            continue;
-        }
-        if (arg.find("Voc:") != std::string::npos) {
-            removeSubstring(arg, "Voc:");
-            string path_to_vocabulary_folder = arg;
-            path_to_vocabulary =  path_to_vocabulary_folder + "/ORBvoc.txt";
-            std::cout << "Path to vocabulary = " << path_to_vocabulary << std::endl;
-            continue;
-        }
         if (arg.find("sequence_path:") != std::string::npos) {
             removeSubstring(arg, "sequence_path:");
-            path_to_sequence =  arg;
-            std::cout << "Path to sequence = " << path_to_sequence << std::endl;
+            sequence_path =  arg;
+            std::cout << "Path to sequence = " << sequence_path << std::endl;
+            continue;
+        }
+        if (arg.find("calibration_yaml:") != std::string::npos) {
+            removeSubstring(arg, "calibration_yaml:");
+            calibration_yaml =  arg;
+            std::cout << "Path to calibration.yaml = " << calibration_yaml << std::endl;
+            continue;
+        }
+        if (arg.find("rgb_txt:") != std::string::npos) {
+            removeSubstring(arg, "rgb_txt:");
+            rgb_txt =  arg;
+            std::cout << "Path to rgb_txt = " << rgb_txt << std::endl;
             continue;
         }
         if (arg.find("exp_folder:") != std::string::npos) {
             removeSubstring(arg, "exp_folder:");
-            path_to_output =  arg;
-            std::cout << "Path to output = " << path_to_output << std::endl;
+            exp_folder =  arg;
+            std::cout << "Path to exp_folder = " << exp_folder << std::endl;
             continue;
         }
         if (arg.find("exp_id:") != std::string::npos) {
             removeSubstring(arg, "exp_id:");
-            experimentIndex =  arg;
-            std::cout << "Exp id = " << experimentIndex << std::endl;
+            exp_id =  arg;
+            std::cout << "Exp id = " << exp_id << std::endl;
+            continue;
+        }
+        if (arg.find("settings_yaml:") != std::string::npos) {
+            removeSubstring(arg, "settings_yaml:");
+            settings_yaml =  arg;
+            std::cout << "Path to settings_yaml = " << settings_yaml << std::endl;
+            continue;
+        }
+        if (arg.find("verbose:") != std::string::npos) {
+            removeSubstring(arg, "verbose:");
+            verbose = bool(std::stoi(arg));
+            std::cout << "Activate Visualization = " << verbose << std::endl;
+            continue;
+        }
+        if (arg.find("vocabulary:") != std::string::npos) {
+            removeSubstring(arg, "vocabulary:");
+            vocabulary = arg;
+            std::cout << "Path to vocabulary = " << vocabulary << std::endl;
             continue;
         }
     }
 
-    string path_to_settings = path_to_sequence + "/calibration.yaml";
 
     // Retrieve paths to images
     vector<string> imageFilenames{};
     vector<ORB_SLAM2::Seconds> timestamps{};
-    LoadImages(path_to_sequence, imageFilenames, timestamps);
+    LoadImages(sequence_path, imageFilenames, timestamps);
 
     size_t nImages = imageFilenames.size();
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM2::System SLAM(path_to_vocabulary, path_to_settings,
+    ORB_SLAM2::System SLAM(vocabulary, calibration_yaml,
                            ORB_SLAM2::System::MONOCULAR,
-                           activateVisualization);
+                           verbose);
 
     // Vector for tracking time statistics
     vector<ORB_SLAM2::Seconds> vTimesTrack;
@@ -153,7 +175,7 @@ int main(int argc, char **argv)
     cout << "mean tracking time: " << totaltime/nImages << endl;
 
     // Save camera trajectory
-    string resultsPath_expId = path_to_output + "/" + paddingZeros(experimentIndex);
+    string resultsPath_expId = exp_folder + "/" + paddingZeros(exp_id);
     SLAM.SaveKeyFrameTrajectoryTUM(resultsPath_expId + "_" + "KeyFrameTrajectory.txt");
 
     return 0;

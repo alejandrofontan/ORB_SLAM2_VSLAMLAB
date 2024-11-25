@@ -102,6 +102,16 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
     cout << "- fps: " << fps << endl;
     cout << "- RGB: " << mbRGB << endl;
 
+    if(sensor==System::RGBD)
+        {
+            mDepthMapFactor = fCalibration["depth_factor"];
+            cout << "- Depth Map Factor: " << mDepthMapFactor << endl;
+            if(fabs(mDepthMapFactor)<1e-5)
+                mDepthMapFactor=1;
+            else
+                mDepthMapFactor = 1.0f/mDepthMapFactor;
+        }
+        
     // Load settings file
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
 
@@ -139,16 +149,6 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
 
     }
 
-
-    if(sensor==System::RGBD)
-    {
-        mDepthMapFactor = fSettings["DepthMapFactor"];
-        cout << "- Depth Map Factor: " << mDepthMapFactor << endl;
-        if(fabs(mDepthMapFactor)<1e-5)
-            mDepthMapFactor=1;
-        else
-            mDepthMapFactor = 1.0f/mDepthMapFactor;
-    }
 }
 
 void Tracking::SetLocalMapper(LocalMapping *pLocalMapper)

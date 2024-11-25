@@ -67,49 +67,49 @@ int main(int argc, char **argv)
         if (arg.find("sequence_path:") != std::string::npos) {
             removeSubstring(arg, "sequence_path:");
             sequence_path =  arg;
-            std::cout << "[mono_vslamlab.cpp] Path to sequence = " << sequence_path << std::endl;
+            std::cout << "[rgbd_vslamlab.cpp] Path to sequence = " << sequence_path << std::endl;
             continue;
         }
         if (arg.find("calibration_yaml:") != std::string::npos) {
             removeSubstring(arg, "calibration_yaml:");
             calibration_yaml =  arg;
-            std::cout << "[mono_vslamlab.cpp] Path to calibration.yaml = " << calibration_yaml << std::endl;
+            std::cout << "[rgbd_vslamlab.cpp] Path to calibration.yaml = " << calibration_yaml << std::endl;
             continue;
         }
         if (arg.find("rgb_txt:") != std::string::npos) {
             removeSubstring(arg, "rgb_txt:");
             rgb_txt =  arg;
-            std::cout << "[mono_vslamlab.cpp] Path to rgb_txt = " << rgb_txt << std::endl;
+            std::cout << "[rgbd_vslamlab.cpp] Path to rgb_txt = " << rgb_txt << std::endl;
             continue;
         }
         if (arg.find("exp_folder:") != std::string::npos) {
             removeSubstring(arg, "exp_folder:");
             exp_folder =  arg;
-            std::cout << "[mono_vslamlab.cpp] Path to exp_folder = " << exp_folder << std::endl;
+            std::cout << "[rgbd_vslamlab.cpp] Path to exp_folder = " << exp_folder << std::endl;
             continue;
         }
         if (arg.find("exp_id:") != std::string::npos) {
             removeSubstring(arg, "exp_id:");
             exp_id =  arg;
-            std::cout << "[mono_vslamlab.cpp] Exp id = " << exp_id << std::endl;
+            std::cout << "[rgbd_vslamlab.cpp] Exp id = " << exp_id << std::endl;
             continue;
         }
         if (arg.find("settings_yaml:") != std::string::npos) {
             removeSubstring(arg, "settings_yaml:");
             settings_yaml =  arg;
-            std::cout << "[mono_vslamlab.cpp] Path to settings_yaml = " << settings_yaml << std::endl;
+            std::cout << "[rgbd_vslamlab.cpp] Path to settings_yaml = " << settings_yaml << std::endl;
             continue;
         }
         if (arg.find("verbose:") != std::string::npos) {
             removeSubstring(arg, "verbose:");
             verbose = bool(std::stoi(arg));
-            std::cout << "[mono_vslamlab.cpp] Activate Visualization = " << verbose << std::endl;
+            std::cout << "[rgbd_vslamlab.cpp] Activate Visualization = " << verbose << std::endl;
             continue;
         }
         if (arg.find("vocabulary:") != std::string::npos) {
             removeSubstring(arg, "vocabulary:");
             vocabulary = arg;
-            std::cout << "[mono_vslamlab.cpp] Path to vocabulary = " << vocabulary << std::endl;
+            std::cout << "[rgbd_vslamlab.cpp] Path to vocabulary = " << vocabulary << std::endl;
             continue;
         }
     }
